@@ -8,10 +8,19 @@ collectfs.o : collectfs.c log.h
 log.o : log.c log.h
 	gcc -O2 -g -Wall `pkg-config fuse --cflags` -c log.c
 
-clean:
+collectfs.1.html : collectfs.1
+	groff -man -T html collectfs.1 > collectfs.1.html
+
+collectfs.1.man : collectfs.1
+	groff -man -T ascii collectfs.1 > collectfs.man
+
+doc : collectfs.1.html collectfs.1.man
+	echo done doc
+
+clean :
 	rm -f collectfs *.o
 
-dist:
+dist :
 	rm -rf dist/collectfs/
 	mkdir -p dist/collectfs/
 	cp Makefile *.c *.h *.1 COPYING README dist/collectfs/

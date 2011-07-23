@@ -9,10 +9,10 @@
  * Partly based on log.c in BBFS from
  * http://www.cs.nmsu.edu/~pfeiffer/fuse-tutorial/
  * but this code is a total rewrite, now uses the syslog 
- * and disguishes between tracing and error-logging.
+ * and distinguishes between tracing and error-logging.
  * 
  * Copyright 2011, Michael Hamilton
- *  GPL 3.0(GNU General Public License) - see COPYING file
+ * GPL 3.0(GNU General Public License) - see COPYING file
  */
 #include <fuse.h>
 
