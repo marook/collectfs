@@ -1,11 +1,11 @@
 /*
- * Collect File System - collect any files that get clobbered
- *
- * Most of this code is loosly based on BBFS from the 
- * fuse tutorial - http://www.cs.nmsu.edu/~pfeiffer/fuse-tutorial/
+ * Collect Filesystem - collect any files that get clobbered
  *
  * Copyright 2011, Michael Hamilton
  * GPL 3.0(GNU General Public License) - see COPYING file
+ * 
+ * Most of this code is loosly based on BBFS from the 
+ * fuse tutorial - http://www.cs.nmsu.edu/~pfeiffer/fuse-tutorial/
  */
 
 /*+ Comments with a *+ are from the bbfs fuse tutorial
@@ -66,7 +66,7 @@
  */
 #define COLLECT_DOES_NOT_EXIST 2
 /**
- * A reall collection problem, such as file name to long
+ * A real collection problem, such as file name to long
  * or an error in the underlying real file-system.
  */
 #define COLLECT_ERROR -1
@@ -138,7 +138,7 @@ static void usage(char *prog)
             "   -t, --trace           log all file operations\n"
             "   -f                    run in foreground and log to stderr\n\n"
             "Environment variables:\n"
-            "   COLLECTFS_LOGALL      if set, log all file system operations.\n"
+            "   COLLECTFS_LOGALL      if set, log all filesystem operations.\n"
             "   COLLECTFS_TRASH       the trash folder name (%s)\n\n", COLLECTFS_VERSION, prog, trashname);
 }
 
@@ -162,7 +162,7 @@ static int command_options_processor(void *data, const char *arg, int key, struc
         set_tracing(1);
         return 0;
     case ID_MONITOR:
-        /* force forground operation */
+        /* force foreground operation */
         set_use_syslog(0);
         return 1;
     case ID_CENSOR:
@@ -223,6 +223,7 @@ static int wrap_op(const char *opname, const int return_status)
  */
 static int mkdir_trash_path(char *fspath)
 {
+    /* TODO copy permissions from the original path */
     int parent_mode = 0700;
     struct stat sb;
     char *p;
@@ -460,7 +461,7 @@ static int fop_unlink(const char *path)
          */
         return -errno;
     case COLLECT_NOT_COLLECTABLE:
-        /* Not collectable - eg a named pipe - let unlink do
+        /* Not collectible - eg a named pipe - let unlink do
          * its job.
          */
         break;
@@ -875,7 +876,7 @@ static int fop_fsyncdir(const char *path, int datasync, struct fuse_file_info *f
 
     trace_info("fop_fsyncdir(path='%s', datasync=%d, fi=0x%08x)", path, datasync, fi);
     trace_fi(fi);
-    // TODO - how to test this one?
+    /* TODO - how to test this one? */
     if (datasync) {
         rstatus = wrap_op("fop_fsyncdir (fdatasync)", fdatasync(fi->fh));
     } else {
@@ -1012,6 +1013,7 @@ int main(int argc, char *argv[])
     int param_index; /* first non option parameter */
     struct local_context *context;
 
+    /* TODO - figure out what to do about this comment - from bbfs */
     /*+ collectfs doesn't do any access checking on its own (the comment
      *+ blocks in fuse.h mention some of the functions that need
      *+ accesses checked -- but note there are other functions, like
@@ -1031,10 +1033,10 @@ int main(int argc, char *argv[])
         perror("Failed to initialise - failed to allocate memory for internal context (via calloc).\n");
         return EXIT_FAILURE;
     }
-    // Find first argument that isn't an option - one that doesn't start with -
+    /* Find first argument that isn't an option - one that doesn't start with - */
     for (param_index = 1; (param_index < argc) && (argv[param_index][0] == '-'); param_index++) {
         if (argv[param_index][1] == 'o' && argv[param_index][2] == '\0') {
-            param_index++;                // Skip over -o arg
+            param_index++;                /* Skip over -o arg */
         }
     }
 
@@ -1083,7 +1085,7 @@ int main(int argc, char *argv[])
         if (getenv("COLLECTFS_TRASH") != NULL) {
             trashname = getenv("COLLECTFS_TRASH");
             if (strchr(trashname, '/') != NULL) {
-                fprintf(stderr, "COLLECTFS_TRASH must be a directory at the file system root - a path is not allowed.\n");
+                fprintf(stderr, "COLLECTFS_TRASH must be a directory at the filesystem root - a path is not allowed.\n");
                 return EXIT_FAILURE;
             }
         }

@@ -1,0 +1,160 @@
+.TH collectfs 1 "collectfs" "MH" \" -*- nroff -*-
+.SH NAME
+collectfs \- Collect Filesystem.
+.SH SYNOPSIS
+
+.B collectfs 
+[
+.B -t|--trace|-f
+]...
+.I rootdir
+.I mountpoint
+
+.br
+.B collectfs 
+[
+.B -h|--help|-H|--help-fuse|-V
+]...
+
+.SH DESCRIPTION
+.B Collectfs 
+Collectfs is a FUSE userspace filesystem that provides add-on trash collection 
+for a directory hierarchy.  Any file that is overwritten by remove (unlink), 
+move, link, symlink, or open-truncate is relocated to a trash directory.  
+Removed files are date-time stamped so that edit history is maintained (a 
+version number is appended if the same file is collected more than once
+in the same second).
+
+The trash directory
+duplicates the structure (but no permissions) of the original directory 
+to provide some context for recovery.  Collectfs uses rename to collect
+files - this requires no data to be copied.  Because collectfs relies on 
+rename, the trash directory must reside within the hierarchy being 
+collected (i.e. the same physical filesystem). 
+
+Only normal files are collected.  Symbolic links are collected, but
+only as links.  Fifos are not collected.  Directories are only collected
+if necessary to preserve file content - there is no protection for 
+empty directories.
+
+Collectfs is intended to be useful for development projects where users 
+may wish to preserve the changes they've made as they modify or edit
+files.
+
+.SS OPTIONS
+.TP
+.B -t, --trace
+
+Output a trace of each FUSE operation performed by collectfs. Normally
+this would be passed to the system log unless the -f option is also applied.
+
+.TP
+.B -f
+
+Instruct FUSE to run in the foreground and direct output normally sent to
+the system log to the standard error stream.
+
+.TP
+.B -h, --help
+
+Collectfs help.  A short usage and options summary and exit.
+
+.TP
+.B -H, --help-fuse
+
+Access the fuse usage and options summary and exit.
+
+.TP 
+.B -V
+
+Report collectfs version and exit.
+
+.SH EXAMPLES
+.PP
+Make a development project directory and use collectfs to protect it.
+.IP
+.nf
+    mkdir my_project_src
+    mkdir my_project
+    collectfs my_project_src my_project
+    touch my_project/code.c
+    rm my_project/code.c
+    ls my_project/.trash/
+    usermount -u my_project
+.fi
+.PP
+The real source of the project is 
+.B my_project_src
+, but the developer works within the 
+.B my_project
+mount-point gaining protection of collectfs.  Files are moved to .trash
+when ever they get clobbered.
+
+.SH ENVIRONMENT VARIABLES
+.TP
+.B COLLECTFS_LOGALL      
+if set, log all FUSE filesystem operations.
+.TP
+.B COLLECTFS_TRASH
+if set use an alternative trash directory name (the default is .trash). Only 
+the name can be specified, no path element is accepted.  The trash
+directory will always reside at the top of the filesystem.
+
+.SH BUGS AND LIMITATIONS
+
+.PP
+Collectfs does not currently preserve permissions when duplicating directory
+hierarchies.  Directories under the trash folder will be created with the 
+current umask.  Because of this, files moved to the trash folder may 
+become more accessible to other users than before.
+
+Empty directories aren't protected.  Collectfs is currently aimed at preserving
+files and some associated directory context. 
+
+The trash directory is visible within the collectfs, if you perform file
+operations such as rm on trashed files inside mounted collectfs, the 
+collectfs will simply move them a trash directory inside the trash 
+directory (rm -r on the trash folder just results in a trash folder
+in the trash folder and a "Directory not empty" error).  Note, if you
+can really remove files from the trash by using the real non-fuse
+path to the trash folder.
+
+There may be bugs that permanently destroy files.  I've been using collectfs 
+to create collectfs.  Other than this, testing has been limited.  As a 
+development tool it works for me, I also backup my system each day.  You 
+need to make your own assessment of how much trust you want to place in 
+collectfs and what measures you should take to protect yourself from any bugs 
+that might be present.
+
+.SH AUTHOR
+Michael Hamilton
+
+.SH ACKNOWLEDGEMENTS
+
+.I The FUSE filesystem in userspace
+.br
+http://fuse.sourceforge.net/
+
+.PP
+.I The FUSE tutorial
+by Joseph J. Pfeiffer
+.br
+http://www.cs.nmsu.edu/~pfeiffer/fuse-tutorial/
+
+.PP
+FUSE examples by John Cobb & Radek Podgorny
+.br
+http://sysdocs.stu.qmul.ac.uk/sysdocs/Comment/FuseUserFileSystems/
+
+
+.SH COPYRIGHT
+
+Copyright 2011, Michael Hamilton.
+
+Collectfs is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3, or (at your option) any
+later version.
+
+
+

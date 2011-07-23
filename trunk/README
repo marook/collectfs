@@ -1,7 +1,8 @@
-COLLECTFS - COLLECT FILE SYSTEM
+COLLECTFS - COLLECT FILESYSTEM
 Version 1.0
 
 Copyright 2011, Michael Hamilton
+http://codeincluded.blogspot.com/
 GPL 3.0(GNU General Public License) - see COPYING file
 
 Collectfs is a userspace filesystem that provides add-on trash collection 
@@ -41,44 +42,12 @@ to provide some context for recovery.  Using rename is fast requiring
 no data to be copied.  Because collectfs relies on using rename, the 
 trash directory must reside within the same physical filesystem. 
 
-Usage:
-    collectfs rootDir mountPoint
-    collectfs -h
-E.g.
-    mkdir my_project_src
-    mkdir my_project
-    collectfs my_project_src my_project
-    touch my_project/code.c
-    rm my_project/code.c
-    ls my_project/.trash/
-    usermount -u my_project
+USAGE:
 
-LIMITATIONS
+See collectfs.1 - also included as collectfs.1.man and collectfs.1.html
+(e.g. less -r collectfs.1.man )
 
-Collectfs does not currently preserve permissions when duplicating directory
-hierarchies.  Directories under the trash folder will be created with the 
-current umask.  Because of this, files moved to the trash folder may 
-become more accessible to other users than before.
-
-Empty directories aren't protected.  Collectfs is currently aimed at preserving
-files and some associated directory context. 
-
-The trash directory is visible within the collectfs, if you perform file
-operations such as rm on trashed files inside mounted collectfs, the 
-collectfs will simply move them a trash directory inside the trash 
-directory (rm -r on the trash folder just results in a trash folder
-in the trash folder and a "Directory not empty" error).  Note, if you
-can really remove files from the trash by using the real non-fuse
-path to the trash folder.
-
-There may be bugs that permanently destroy files.  I've been using collectfs 
-to create collectfs.  Other than this, testing has been limited.  As a 
-development tool it works for me - I backup my system each day and 
-trust collectfs to protect the odd folder hierarchy - you need to assess 
-how trust you wish to place in it and what other measures you should take
-to protect yourself from any bugs that might be present.
-
-Credits:
+CREDITS:
 
 http://fuse.sourceforge.net/
 
