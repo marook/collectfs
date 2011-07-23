@@ -21,7 +21,7 @@ clean :
 	rm -f collectfs *.o
 
 dist :
-	rm -rf dist/collectfs/
-	mkdir -p dist/collectfs/
-	cp Makefile *.c *.h *.1 COPYING README dist/collectfs/
-	cd dist/; tar cvzf ../collectfs.tar.gz collectfs/
+	rm -rf distfiles/collectfs/
+	mkdir -p distfiles/collectfs/
+	cp Makefile *.c *.h *.1 *.html *.man COPYING README distfiles/collectfs/
+	cd distfiles/; tar cvzf ../collectfs.tar.gz collectfs/
