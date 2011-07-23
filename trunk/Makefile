@@ -12,7 +12,7 @@ collectfs.1.html : collectfs.1
 	groff -man -T html collectfs.1 > collectfs.1.html
 
 collectfs.1.man : collectfs.1
-	groff -man -T ascii collectfs.1 > collectfs.man
+	groff -man -T ascii collectfs.1 > collectfs.1.man
 
 doc : collectfs.1.html collectfs.1.man
 	echo done doc
