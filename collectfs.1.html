@@ -1,0 +1,262 @@
+<!-- Creator     : groff version 1.20.1 -->
+<!-- CreationDate: Sat Jul 23 16:45:10 2011 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<meta name="Content-Style" content="text/css">
+<style type="text/css">
+       p       { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       pre     { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       table   { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       h1      { text-align: center }
+</style>
+<title>collectfs</title>
+
+</head>
+<body>
+
+<h1 align="center">collectfs</h1>
+
+<a href="#NAME">NAME</a><br>
+<a href="#SYNOPSIS">SYNOPSIS</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#EXAMPLES">EXAMPLES</a><br>
+<a href="#ENVIRONMENT VARIABLES">ENVIRONMENT VARIABLES</a><br>
+<a href="#BUGS AND LIMITATIONS">BUGS AND LIMITATIONS</a><br>
+<a href="#AUTHOR">AUTHOR</a><br>
+<a href="#ACKNOWLEDGEMENTS">ACKNOWLEDGEMENTS</a><br>
+<a href="#COPYRIGHT">COPYRIGHT</a><br>
+
+<hr>
+
+
+<h2>NAME
+<a name="NAME"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">collectfs
+&minus; Collect Filesystem.</p>
+
+<h2>SYNOPSIS
+<a name="SYNOPSIS"></a>
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>collectfs</b>
+[ <b>-t|--trace|-f</b> ]... <i>rootdir mountpoint</i></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>collectfs</b>
+[ <b>-h|--help|-H|--help-fuse|-V</b> ]...</p>
+
+<h2>DESCRIPTION
+<a name="DESCRIPTION"></a>
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>Collectfs</b>
+Collectfs is a FUSE userspace filesystem that provides
+add-on trash collection for a directory hierarchy. Any file
+that is overwritten by remove (unlink), move, link, symlink,
+or open-truncate is relocated to a trash directory. Removed
+files are date-time stamped so that edit history is
+maintained (a version number is appended if the same file is
+collected more than once in the same second).</p>
+
+<p style="margin-left:11%; margin-top: 1em">The trash
+directory duplicates the structure (but no permissions) of
+the original directory to provide some context for recovery.
+Collectfs uses rename to collect files - this requires no
+data to be copied. Because collectfs relies on rename, the
+trash directory must reside within the hierarchy being
+collected (i.e. the same physical filesystem).</p>
+
+<p style="margin-left:11%; margin-top: 1em">Only normal
+files are collected. Symbolic links are collected, but only
+as links. Fifos are not collected. Directories are only
+collected if necessary to preserve file content - there is
+no protection for empty directories.</p>
+
+<p style="margin-left:11%; margin-top: 1em">Collectfs is
+intended to be useful for development projects where users
+may wish to preserve the changes they&rsquo;ve made as they
+modify or edit files.</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>OPTIONS <br>
+-t, --trace</b></p>
+
+<p style="margin-left:22%; margin-top: 1em">Output a trace
+of each FUSE operation performed by collectfs. Normally this
+would be passed to the system log unless the -f option is
+also applied.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+<p><b>-f</b></p></td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p>Instruct FUSE to run in the foreground and direct output
+normally sent to the system log to the standard error
+stream.</p> </td></tr>
+</table>
+
+<p style="margin-left:11%;"><b>-h, --help</b></p>
+
+<p style="margin-left:22%; margin-top: 1em">Collectfs help.
+A short usage and options summary and exit.</p>
+
+<p style="margin-left:11%;"><b>-H, --help-fuse</b></p>
+
+<p style="margin-left:22%; margin-top: 1em">Access the fuse
+usage and options summary and exit.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+<p><b>-V</b></p></td>
+<td width="8%"></td>
+<td width="52%">
+
+
+<p>Report collectfs version and exit.</p></td>
+<td width="26%">
+</td></tr>
+</table>
+
+<h2>EXAMPLES
+<a name="EXAMPLES"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Make a
+development project directory and use collectfs to protect
+it.</p>
+
+<p style="margin-left:22%; margin-top: 1em">mkdir
+my_project_src <br>
+mkdir my_project <br>
+collectfs my_project_src my_project <br>
+touch my_project/code.c <br>
+rm my_project/code.c <br>
+ls my_project/.trash/ <br>
+usermount -u my_project</p>
+
+<p style="margin-left:11%; margin-top: 1em">The real source
+of the project is <b>my_project_src</b> , but the developer
+works within the <b>my_project</b> mount-point gaining
+protection of collectfs. Files are moved to .trash when ever
+they get clobbered.</p>
+
+<h2>ENVIRONMENT VARIABLES
+<a name="ENVIRONMENT VARIABLES"></a>
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>COLLECTFS_LOGALL</b></p>
+
+<p style="margin-left:22%;">if set, log all FUSE filesystem
+operations.</p>
+
+<p style="margin-left:11%;"><b>COLLECTFS_TRASH</b></p>
+
+<p style="margin-left:22%;">if set use an alternative trash
+directory name (the default is .trash). Only the name can be
+specified, no path element is accepted. The trash directory
+will always reside at the top of the filesystem.</p>
+
+<h2>BUGS AND LIMITATIONS
+<a name="BUGS AND LIMITATIONS"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Collectfs does
+not currently preserve permissions when duplicating
+directory hierarchies. Directories under the trash folder
+will be created with the current umask. Because of this,
+files moved to the trash folder may become more accessible
+to other users than before.</p>
+
+<p style="margin-left:11%; margin-top: 1em">Empty
+directories aren&rsquo;t protected. Collectfs is currently
+aimed at preserving files and some associated directory
+context.</p>
+
+<p style="margin-left:11%; margin-top: 1em">The trash
+directory is visible within the collectfs, if you perform
+file operations such as rm on trashed files inside mounted
+collectfs, the collectfs will simply move them a trash
+directory inside the trash directory (rm -r on the trash
+folder just results in a trash folder in the trash folder
+and a &quot;Directory not empty&quot; error). Note, if you
+can really remove files from the trash by using the real
+non-fuse path to the trash folder.</p>
+
+<p style="margin-left:11%; margin-top: 1em">There may be
+bugs that permanently destroy files. I&rsquo;ve been using
+collectfs to create collectfs. Other than this, testing has
+been limited. As a development tool it works for me, I also
+backup my system each day. You need to make your own
+assessment of how much trust you want to place in collectfs
+and what measures you should take to protect yourself from
+any bugs that might be present.</p>
+
+<h2>AUTHOR
+<a name="AUTHOR"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Michael
+Hamilton</p>
+
+<h2>ACKNOWLEDGEMENTS
+<a name="ACKNOWLEDGEMENTS"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em"><i>The FUSE
+filesystem in userspace</i> <br>
+http://fuse.sourceforge.net/</p>
+
+<p style="margin-left:11%; margin-top: 1em"><i>The FUSE
+tutorial</i> by Joseph J. Pfeiffer <br>
+http://www.cs.nmsu.edu/~pfeiffer/fuse-tutorial/</p>
+
+<p style="margin-left:11%; margin-top: 1em">FUSE examples
+by John Cobb &amp; Radek Podgorny <br>
+
+http://sysdocs.stu.qmul.ac.uk/sysdocs/Comment/FuseUserFileSystems/</p>
+
+<h2>COPYRIGHT
+<a name="COPYRIGHT"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Copyright 2011,
+Michael Hamilton.</p>
+
+<p style="margin-left:11%; margin-top: 1em">Collectfs is
+free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 3,
+or (at your option) any later version.</p>
+<hr>
+</body>
+</html>
