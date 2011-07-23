@@ -31,13 +31,13 @@ Any file that is updated in place is not protected.  So it's not going to
 protect you from dropping database tables.
 
 It isn't aware of cross file dependencies that some tools may require for
-a set of files to consistent and usable.
+a set of files to be consistent and usable.
 
 HOW IT WORKS:
 
 The fuse layer traps the previously mentioned filesystem operations and
 renames clobbered files to a trash directory.  The trash directory
-duplicates the structure (but no permissions) of the original directory 
+duplicates the structure (but not permissions) of the original directory 
 to provide some context for recovery.  Using rename is fast requiring
 no data to be copied.  Because collectfs relies on using rename, the 
 trash directory must reside within the same physical filesystem. 
