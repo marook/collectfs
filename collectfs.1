@@ -18,7 +18,7 @@ collectfs \- Collect Filesystem.
 
 .SH DESCRIPTION
 .B Collectfs 
-Collectfs is a FUSE userspace filesystem that provides add-on trash collection 
+is a FUSE userspace filesystem that provides add-on trash collection 
 for a directory hierarchy.  Any file that is overwritten by remove (unlink), 
 move, link, symlink, or open-truncate is relocated to a trash directory.  
 Removed files are date-time stamped so that edit history is maintained (a 
@@ -106,18 +106,18 @@ directory will always reside at the top of the filesystem.
 Collectfs does not currently preserve permissions when duplicating directory
 hierarchies.  Directories under the trash folder will be created with the 
 current umask.  Because of this, files moved to the trash folder may 
-become more accessible to other users than before.
+become more or less accessible to other users than before they were moved.
 
 Empty directories aren't protected.  Collectfs is currently aimed at preserving
 files and some associated directory context. 
 
-The trash directory is visible within the collectfs, if you perform file
-operations such as rm on trashed files inside mounted collectfs, the 
+The trash directory is visible within the collectfs, if you perform 
+operations such as rm on trashed files inside a collectfs,  
 collectfs will simply move them a trash directory inside the trash 
-directory (rm -r on the trash folder just results in a trash folder
-in the trash folder and a "Directory not empty" error).  Note, if you
-can really remove files from the trash by using the real non-fuse
-path to the trash folder.
+directory. For example, rm -r on the trash folder just results in a 
+trash folder in the trash folder, plus "Directory not empty" error from 
+rm.  Note, you can really remove files from the trash by using the 
+real non-fuse path to the trash folder.
 
 There may be bugs that permanently destroy files.  I've been using collectfs 
 to create collectfs.  Other than this, testing has been limited.  As a 
