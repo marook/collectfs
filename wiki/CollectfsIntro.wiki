@@ -1,0 +1,47 @@
+#Collectfs - Linux trash collection for directory hierarchies
+
+= Introduction =
+
+*Collectfs* is a FUSE userspace filesystem that provides add-on trash collection for a directory hierarchy.  Any file that is overwritten by remove (unlink), move, link, symlink, or open-truncate is relocated to a trash directory.  Removed files  are  date-time  stamped so that edit  history  is maintained (a version number is appended if the same file is collected more than once in the same second).
+
+
+= Details =
+
+Collectfs is intended for use in development projects where developers wish to preserve the changes they've made as they modify or edit files. Its a way to preserve or revert the days changes without having to backup or check-in your changes.
+
+The trash directory
+duplicates the structure (but no permissions) of the original directory 
+to provide some context for recovery.  Collectfs uses rename to collect
+files - this requires no data to be copied.  Because collectfs relies on 
+rename, the trash directory must reside within the hierarchy being 
+collected (i.e. the same physical filesystem).
+
+Only normal files are collected.  Symbolic links are collected, but
+only as links.  Fifos are not collected.  Directories are only collected
+if necessary to preserve file content - there is no protection for 
+empty directories.
+
+= Bugs and Limitations =
+
+Collectfs does not currently preserve permissions when duplicating directory
+hierarchies.  Directories under the trash folder will be created with the 
+current umask.  Because of this, files moved to the trash folder may
+become more or less accessible to other users than before they were moved.
+
+Empty directories aren't protected.  Collectfs is currently aimed at preserving
+files and some associated directory context. 
+
+The trash directory is visible within the collectfs, if you perform 
+operations such as rm on trashed files inside a collectfs,      
+collectfs will simply move them a trash directory inside the trash
+directory. For example, rm -r on the trash folder just results in a 
+trash folder in the trash folder, plus "Directory not empty" error from 
+rm.  Note, you can really remove files from the trash by using the 
+real non-fuse path to the trash folder.
+
+There may be bugs that permanently destroy files.  I've been using collectfs
+to create collectfs.  Other than this, testing has been limited.  As a
+development tool it works for me, I also backup my system each day.  You
+need to make your own assessment of how much trust you want to place in
+collectfs and what measures you should take to protect yourself from any bugs
+that might be present.
