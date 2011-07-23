@@ -1,4 +1,4 @@
-#Collectfs - Linux trash collection for directory hierarchies
+#summary Collectfs - Linux trash collection for directory hierarchies
 
 = Introduction =
 
