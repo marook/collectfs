@@ -53,6 +53,10 @@ http://fuse.sourceforge.net/
 
 http://www.cs.nmsu.edu/~pfeiffer/fuse-tutorial/
 Joseph J. Pfeiffer
+A great place to start - includes a complete example filesystem: the
+bbs filesystem that just logs all operations as it forwards them to
+the underlying Linux filesystem.
 
 http://sysdocs.stu.qmul.ac.uk/sysdocs/Comment/FuseUserFileSystems/
 John Cobb & Radek Podgorny
+More good examples.
