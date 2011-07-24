@@ -44,7 +44,7 @@
 /**
  * Will show up in logs
  */
-#define COLLECTFS_VERSION "1.0"
+#define COLLECTFS_VERSION "1.0.0"
 
 /**
  * Collect() function return values - different operations

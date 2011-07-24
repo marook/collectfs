@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.20.1 -->
-<!-- CreationDate: Sat Jul 23 23:15:21 2011 -->
+<!-- CreationDate: Sun Jul 24 10:54:43 2011 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -190,9 +190,10 @@ will always reside at the top of the filesystem.</p>
 <p style="margin-left:11%; margin-top: 1em">Collectfs does
 not currently preserve permissions when duplicating
 directory hierarchies. Directories under the trash folder
-will be created with the current umask. Because of this,
-files moved to the trash folder may become more or less
-accessible to other users than before they were moved.</p>
+will be created with permissions set to 0700
+(user=rwx,group=none,others=none). Because of this, files
+moved to the trash folder may become less accessible to
+other users than before they were moved.</p>
 
 <p style="margin-left:11%; margin-top: 1em">Empty
 directories aren&rsquo;t protected. Collectfs is currently

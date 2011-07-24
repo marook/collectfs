@@ -95,9 +95,9 @@ collectfs(1)                                                      collectfs(1)
 [1mBUGS AND LIMITATIONS[0m
        Collectfs does not  currently  preserve  permissions  when  duplicating
        directory hierarchies.  Directories under the trash folder will be cre-
-       ated with the current umask.  Because of this, files moved to the trash
-       folder  may  become  more or less accessible to other users than before
-       they were moved.
+       ated with permissions set  to  0700  (user=rwx,group=none,others=none).
+       Because of this, files moved to the trash folder may become less acces-
+       sible to other users than before they were moved.
 
        Empty directories aren't protected.  Collectfs is  currently  aimed  at
        preserving files and some associated directory context.

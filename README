@@ -42,6 +42,19 @@ to provide some context for recovery.  Using rename is fast requiring
 no data to be copied.  Because collectfs relies on using rename, the 
 trash directory must reside within the same physical filesystem. 
 
+BUILDING AND INSTALLING
+
+Make sure you have fuse and fuse development headers and libraries installed.
+On OpenSuse these packages are called fuse and fuse-devel.  
+
+   cd collectfs-vN.M
+   make
+   sudo cp collectfs /usr/local/bin
+
+Collectfs doesn't require any special privileges, if you don't have
+root access just put it somewhere on your path or refer to it by 
+its full path.
+
 USAGE:
 
 See collectfs.1 - also included as collectfs.1.man and collectfs.1.html
