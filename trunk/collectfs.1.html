@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.20.1 -->
-<!-- CreationDate: Sun Jul 24 10:54:43 2011 -->
+<!-- CreationDate: Sun Jul 24 17:21:03 2011 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -64,29 +64,33 @@
 is a FUSE userspace filesystem that provides add-on trash
 collection for a directory hierarchy. Any file that is
 overwritten by remove (unlink), move, link, symlink, or
-open-truncate is relocated to a trash directory. Removed
-files are date-time stamped so that edit history is
-maintained (a version number is appended if the same file is
-collected more than once in the same second).</p>
+open-truncate is relocated to a trash directory
+(mountpoint/.trash/). Removed files are date-time stamped so
+that edit history is maintained (a version number is
+appended if the same file is collected more than once in the
+same second). Collectfs is intended as a light weight way to
+preserve changes made throughout the working day. It is not
+intended as a replacement for revision control or backups.
+The intention is to protect you during the between-times,
+when you&rsquo;re not covered by these other tools: those
+moments where you misstep with rm, mv, or cat; or those
+times when you wish you could revert or compare your source
+to as it was an hour ago.</p>
 
-<p style="margin-left:11%; margin-top: 1em">The trash
-directory duplicates the structure (but no permissions) of
-the original directory to provide some context for recovery.
-Collectfs uses rename to collect files - this requires no
-data to be copied. Because collectfs relies on rename, the
-trash directory must reside within the hierarchy being
-collected (i.e. the same physical filesystem).</p>
+<p style="margin-left:11%; margin-top: 1em">To provide some
+context for recovery, the trash directory hierarchy mirrors
+the original directory hierarchy. Collectfs uses rename to
+collect files and move them into the trash hierarchy - this
+is quite efficient because it requires no data to be copied.
+Because collectfs relies on rename, the trash directory must
+reside within the hierarchy being collected (i.e. the same
+physical filesystem).</p>
 
 <p style="margin-left:11%; margin-top: 1em">Only normal
 files are collected. Symbolic links are collected, but only
 as links. Fifos are not collected. Directories are only
 collected if necessary to preserve file content - there is
 no protection for empty directories.</p>
-
-<p style="margin-left:11%; margin-top: 1em">Collectfs is
-intended to be useful for development projects where users
-may wish to preserve the changes they&rsquo;ve made as they
-modify or edit files.</p>
 
 <p style="margin-left:11%; margin-top: 1em"><b>OPTIONS <br>
 -t, --trace</b></p>
@@ -197,18 +201,20 @@ other users than before they were moved.</p>
 
 <p style="margin-left:11%; margin-top: 1em">Empty
 directories aren&rsquo;t protected. Collectfs is currently
-aimed at preserving files and some associated directory
-context.</p>
+aimed at preserving files and with their associated
+directory context.</p>
 
 <p style="margin-left:11%; margin-top: 1em">The trash
-directory is visible within the collectfs, if you perform
-operations such as rm on trashed files inside a collectfs,
-collectfs will simply move them a trash directory inside the
-trash directory. For example, rm -r on the trash folder just
-results in a trash folder in the trash folder, plus
-&quot;Directory not empty&quot; error from rm. Note, you can
-really remove files from the trash by using the real
-non-fuse path to the trash folder.</p>
+directory is visible within the collectfs. If you perform
+operations such as rm on files inside a collectfs trash
+directory, collectfs will just move them to a trash
+directory inside the trash directory. For example, rm -r on
+the trash folder just results in a trash folder inside the
+trash folder as well as a &quot;Directory not empty&quot;
+error from rm command. Note, you can really remove files
+from the trash by using the real non-fuse path to the trash
+folder (collectfs only protects you from operations
+performed under the mount point).</p>
 
 <p style="margin-left:11%; margin-top: 1em">There may be
 bugs that permanently destroy files. I&rsquo;ve been using
