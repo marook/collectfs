@@ -1,5 +1,8 @@
-/*
+/**
  * Collect Filesystem - collect any files that get clobbered
+ *
+ * Collectfs is a userspace filesystem that provides add-on trash 
+ * collection for a directory hierarchy.  
  *
  * Copyright 2011, Michael Hamilton
  * GPL 3.0(GNU General Public License) - see COPYING file
@@ -8,11 +11,8 @@
  * fuse tutorial - http://www.cs.nmsu.edu/~pfeiffer/fuse-tutorial/
  */
 
-/*+ Comments with a *+ are from the bbfs fuse tutorial
- */
-
-/*+ need this to get pwrite(). I have to use setvbuf() instead of
- *+ setlinebuf() later in consequence.
+/* Need this to get pwrite(). I have to use setvbuf() instead of
+ * setlinebuf() later in consequence.
  */
 #define _XOPEN_SOURCE 500
 
@@ -32,9 +32,9 @@
 #include <sys/types.h>
 #include <sys/xattr.h>
 
-/*+ The FUSE API has been changed a number of times. So, our code
- *+ needs to define the version of the API that we assume. As of this
- *+ writing, the most current API version is 26
+/* The FUSE API has been changed a number of times. So, our code
+ * needs to define the version of the API that we assume. As of this
+ * writing, the most current API version is 26
  */
 #define FUSE_USE_VERSION 26
 #include <fuse.h>
@@ -374,10 +374,10 @@ static int fop_getattr(const char *path, struct stat *statbuf)
     return rstatus;
 }
 
-/*+ Note the system readlink() will truncate and lose the terminating
- *+ null. So, the size passed to to the system readlink() must be one
- *+ less than the size passed to fop_readlink()
- *+ fop_readlink() code by Bernardo F Costa (thanks!)
+/* Note the system readlink() will truncate and lose the terminating
+ * null. So, the size passed to to the system readlink() must be one
+ * less than the size passed to fop_readlink()
+ * fop_readlink() code by Bernardo F Costa (thanks!)
  */
 static int fop_readlink(const char *path, char *link, size_t size)
 {
@@ -408,8 +408,8 @@ static int fop_mknod(const char *path, mode_t mode, dev_t dev)
         return -ENAMETOOLONG;
     };
 
-/*+ On Linux this could just be 'mknod(path, mode, rdev)' but this
- *+ is more portable
+/* On Linux this could just be 'mknod(path, mode, rdev)' but this
+ * is more portable
  */
     if (S_ISREG(mode)) {
         rstatus = wrap_op("fop_mknod (open)", open(fpath, O_CREAT | O_EXCL | O_WRONLY, mode));
@@ -824,24 +824,24 @@ static int fop_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_
     struct dirent *de;
 
     trace_info("fop_readdir(path='%s', buf=0x%08x, filler=0x%08x, offset=%lld, fi=0x%08x)", path, buf, filler, offset, fi);
-    /*+ once again, no need for fullpath -- but note that I need to cast fi->fh
+    /* once again, no need for fullpath -- but note that I need to cast fi->fh
      */
     dp = (DIR *) (uintptr_t) fi->fh;
 
-    /*+ Every directory contains at least two entries: . and .. If my
-     *+ first call to the system readdir() returns NULL I've got an
-     *+ error; near as I can tell, that's the only condition under
-     *+ which I can get an error from readdir()
+    /* Every directory contains at least two entries: . and .. If my
+     * first call to the system readdir() returns NULL I've got an
+     * error; near as I can tell, that's the only condition under
+     * which I can get an error from readdir()
      */
     de = readdir(dp);
     if (de == 0) {
         /* record what op and what happened - errno will logged  */
         return wrap_op("fop_readdir (readdir)", -1);
     }
-    /*+ This will copy the entire directory into the buffer. The loop exits
-     *+ when either the system readdir() returns NULL, or filler()
-     *+ returns something non-zero. The first case just means I've
-     *+ read the whole directory; the second means the buffer is full.
+    /* This will copy the entire directory into the buffer. The loop exits
+     * when either the system readdir() returns NULL, or filler()
+     * returns something non-zero. The first case just means I've
+     * read the whole directory; the second means the buffer is full.
      */
     do {
         trace_info(LOG_INDENT("calling filler with name %s"), de->d_name);

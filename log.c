@@ -140,10 +140,10 @@ int trace_errno(const char *format, ...)
     return errno;
 }
 
-/*+ struct fuse_file_info keeps information about files (surprise!). 
- *+ This dumps all the information in a struct fuse_file_info.  The struct 
- *+ definition, and comments, come from /usr/include/fuse/fuse_common.h 
- *+ Duplicated here for convenience. 
+/* struct fuse_file_info keeps information about files (surprise!). 
+ * This dumps all the information in a struct fuse_file_info.  The struct 
+ * definition, and comments, come from /usr/include/fuse/fuse_common.h 
+ * Duplicated here for convenience. 
  */
 void trace_fi(struct fuse_file_info *fi)
 {
@@ -186,8 +186,8 @@ void trace_fi(struct fuse_file_info *fi)
     TRACE_STRUCT(fi, lock_owner, "0x%016llx");
 };
 
-/*+ This dumps the info from a struct stat.  The struct is defined in 
- *+ <bits/stat.h>; this is indirectly included from <fcntl.h> 
+/* This dumps the info from a struct stat.  The struct is defined in 
+ * <bits/stat.h>; this is indirectly included from <fcntl.h> 
  */
 void trace_stat(struct stat *si)
 {
