@@ -74,6 +74,8 @@ http://sysdocs.stu.qmul.ac.uk/sysdocs/Comment/FuseUserFileSystems/
 John Cobb & Radek Podgorny
 More good examples.
 
-vodoo of http://forums.opensuse.org for Makefile improvements
-and adding an OpenSUSE build service package for collectfs
+Thomas Spahni (vodoo of http://forums.opensuse.org) for Makefile 
+improvements and adding an OpenSUSE build service package for 
+collectfs.
+
 
