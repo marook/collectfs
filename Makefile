@@ -1,46 +1,67 @@
+# Makefile for collectfs
 #  Copyright 2011, Michael Hamilton
+#
+#####################
+# User configuration:
+#####################
+# Set this to the directory path of the executable
+INSTALLDIR = /usr/bin
+#
+# Set this to the directory for manual pages
+MANUALDIR  = /usr/share/man
+#
+#####################
 
-VERSION = 1.0.0
-PREFIX = /usr
-BINDIR = $(PREFIX)/bin/
-MANDIR = $(PREFIX)/share/man/man1/
-RPM_SRCDIR = /usr/src/packages/SOURCES/
-RPM_SPECDIR = /usr/src/packages/SPECS/
+PROGNAME = collectfs
 
-collectfs : collectfs.o log.o
-	gcc -g `pkg-config fuse --libs` -o collectfs collectfs.o log.o
+ifeq ($(origin FUSE_C_FLAGS), undefined)
+FUSE_C_FLAGS := $(shell pkg-config fuse --cflags)
+endif
 
-collectfs.o : collectfs.c log.h
-	gcc -O2 -g -Wall `pkg-config fuse --cflags` -c collectfs.c
+ifeq ($(origin FUSE_LD_FLAGS), undefined)
+FUSE_LD_FLAGS := $(shell pkg-config fuse --libs)
+endif
+
+MANDIR  ?= $(MANUALDIR)
+BINDIR  ?= $(INSTALLDIR)
+LDFLAGS ?= $(FUSE_LD_FLAGS)
+CFLAGS  ?= $(FUSE_C_FLAGS) 
+
+.PHONY : all doc install clean dist
+
+all : $(PROGNAME)
+
+$(PROGNAME) : $(PROGNAME).o log.o
+	gcc -g -o $(PROGNAME) $(PROGNAME).o log.o $(LDFLAGS)
+
+$(PROGNAME).o : $(PROGNAME).c log.h
+	gcc -O2 -g -Wall $(CFLAGS) $(OPTFLAGS) -c $(PROGNAME).c
 
 log.o : log.c log.h
-	gcc -O2 -g -Wall `pkg-config fuse --cflags` -c log.c
+	gcc -O2 -g -Wall $(CFLAGS) $(OPTFLAGS) -c log.c
 
-collectfs.1.html : collectfs.1
-	groff -man -T html collectfs.1 > collectfs.1.html
+$(PROGNAME).1.html : $(PROGNAME).1
+	groff -man -T html $(PROGNAME).1 > $(PROGNAME).1.html
 
-collectfs.1.man : collectfs.1
-	groff -man -T ascii collectfs.1 > collectfs.1.man
+$(PROGNAME).1.man : $(PROGNAME).1
+	groff -man -T ascii $(PROGNAME).1 > $(PROGNAME).1.man
 
-install : collectfs
-	install -D collectfs $(BINDIR)/collectfs
-	install -D collectfs.1 $(MANDIR)/collectfs.1
+$(PROGNAME).1.gz : $(PROGNAME).1
+	cat $(PROGNAME).1 | gzip -9 > $(PROGNAME).1.gz
 
-doc : collectfs.1.html collectfs.1.man
-	echo done doc
+doc : $(PROGNAME).1.html $(PROGNAME).1.man $(PROGNAME).1.gz
+
+install : $(PROGNAME) doc
+	install -d -m 755 $(DESTDIR)$(BINDIR)
+	install -d -m 755 $(DESTDIR)$(MANDIR)/man1
+	install -m 755 $(PROGNAME) $(DESTDIR)$(BINDIR)/
+	install -m 644 $(PROGNAME).1.gz $(DESTDIR)$(MANDIR)/man1/
 
 clean :
-	rm -f collectfs *.o 
-	rm -rf distfiles
+	rm -f $(PROGNAME) $(PROGNAME).1.gz *.o
 
 dist :
-	grep $(VERSION) collectfs.c collectfs.spec
-	rm -rf distfiles/collectfs-$(VERSION)/
-	mkdir -p distfiles/collectfs-$(VERSION)/
-	cp Makefile *.c *.h *.1 *.html *.man *.spec COPYING README distfiles/collectfs-$(VERSION)/
-	cd distfiles/; tar cvzf ../collectfs-$(VERSION).tar.gz collectfs-$(VERSION)/
-
-rpm : dist
-	cp collectfs.spec $(RPM_SPECDIR)
-	cp collectfs-$(VERSION).tar.gz $(RPM_SRCDIR)
-	rpmbuild -ba -v $(RPM_SPECDIR)/collectfs.spec
+	rm -rf distfiles/$(PROGNAME)/
+	mkdir -p distfiles/$(PROGNAME)/
+	cp Makefile *.c *.h *.1 *.html *.man COPYING README distfiles/$(PROGNAME)/
+	cd distfiles/; tar cvzf ../$(PROGNAME).tar.gz $(PROGNAME)/
