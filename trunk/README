@@ -1,5 +1,5 @@
 COLLECTFS - COLLECT FILESYSTEM
-Version 1.0
+Version 1.0.1
 
 Copyright 2011, Michael Hamilton
 http://codeincluded.blogspot.com/
@@ -73,3 +73,7 @@ the underlying Linux filesystem.
 http://sysdocs.stu.qmul.ac.uk/sysdocs/Comment/FuseUserFileSystems/
 John Cobb & Radek Podgorny
 More good examples.
+
+vodoo of http://forums.opensuse.org for Makefile improvements
+and adding an OpenSUSE build service package for collectfs
+
