@@ -44,7 +44,7 @@
 /**
  * Will show up in logs
  */
-#define COLLECTFS_VERSION "1.0.0"
+#define COLLECTFS_VERSION "1.0.1"
 
 /**
  * Collect() function return values - different operations
@@ -891,6 +891,7 @@ void *fop_init(struct fuse_conn_info *conn)
     
     log_info("Collectfs starting: [%s]", mycontext->rootdir);
     trace_info("fop_init()");
+#ifdef FUSE_CAP_ATOMIC_O_TRUNC
     if ((unsigned int)conn->capable & FUSE_CAP_ATOMIC_O_TRUNC) {
         /* We want open to handle open-truncate so we can collect the
          * file being replaced.
@@ -899,6 +900,9 @@ void *fop_init(struct fuse_conn_info *conn)
         can_collect_open_truncate = 1;
         log_info("Collectfs %s: FUSE_CAP_ATOMIC_O_TRUNC is supported - will collect open truncate.", COLLECTFS_VERSION);
     } else {
+#else
+    {
+#endif
         log_info("Collectfs %s: WARNING, cannot collect open truncate - not supported by this kernel.", COLLECTFS_VERSION);
     }
 
